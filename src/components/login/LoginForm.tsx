@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { validateId, validatePassword } from '../../util/validation';
 
+import UserInfoInput from '../common/UserInfoInput';
+
 const LoginForm = () => {
   const [inputId, setInputId] = useState('');
   const [inputPassword, setinputPassword] = useState('');
@@ -20,30 +22,24 @@ const LoginForm = () => {
     '비밀번호는 8 ~ 32자 사이이고 최소 1개 이상의 영문자와 숫자를 포함해야합니다.',
   ];
 
-  const onChangeId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputId(e.target.value);
-  };
-
   const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setinputPassword(e.target.value);
   };
 
-  const setIdWarningMessage = (id: string) => {
-    if (id.length === 0) return setIdWarningMessageIndex(1);
-    const isValid = validateId(id);
-
-    if (isValid) {
+  const setIdWarningMessage = () => {
+    if (inputId.length === 0) {
+      setIdWarningMessageIndex(1);
+    } else if (validateId(inputId)) {
       setIdWarningMessageIndex(0);
     } else {
       setIdWarningMessageIndex(2);
     }
   };
 
-  const setPasswordWarningMessage = (password: string) => {
-    if (password.length === 0) return setPasswordWarningMessageIndex(1);
-    const isValid = validatePassword(password);
-
-    if (isValid) {
+  const setPasswordWarningMessage = () => {
+    if (inputPassword.length === 0) {
+      setPasswordWarningMessageIndex(1);
+    } else if (validatePassword(inputPassword)) {
       setPasswordWarningMessageIndex(0);
     } else {
       setPasswordWarningMessageIndex(2);
@@ -57,33 +53,29 @@ const LoginForm = () => {
     if (isValidId && isValidPassword) {
       console.log('요청함');
     } else {
-      setIdWarningMessage(inputId);
-      setPasswordWarningMessage(inputPassword);
+      setIdWarningMessage();
+      setPasswordWarningMessage();
     }
   };
 
   return (
     <LoginFormWrapper>
       <Form onSubmit={onSubmit}>
-        <InputContainer>
-          <Input
-            placeholder="아이디"
-            value={inputId}
-            onChange={onChangeId}
-            onBlur={(e) => setIdWarningMessage(e.target.value)}
-          />
-          <ErrorViewer>{idWarningMessages[idWarningMessageIndex]}</ErrorViewer>
-        </InputContainer>
-        <InputContainer>
-          <Input
-            type="password"
-            placeholder="비밀번호"
-            value={inputPassword}
-            onChange={onChangePassword}
-            onBlur={(e) => setPasswordWarningMessage(e.target.value)}
-          />
-          <ErrorViewer>{passwordWarningMessages[passwordWarningMessageIndex]}</ErrorViewer>
-        </InputContainer>
+        <UserInfoInput
+          value={inputId}
+          setValue={setInputId}
+          placeholder="아이디"
+          warningMessage={idWarningMessages[idWarningMessageIndex]}
+          onBlur={setIdWarningMessage}
+        />
+        <UserInfoInput
+          type="password"
+          value={inputPassword}
+          setValue={setinputPassword}
+          placeholder="비밀번호"
+          warningMessage={passwordWarningMessages[passwordWarningMessageIndex]}
+          onBlur={setPasswordWarningMessage}
+        />
         <LoginButton>로그인</LoginButton>
         <SignUpLink to="/sign-up">회원가입</SignUpLink>
       </Form>
