@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { validateId, validatePassword } from '../../util/validation';
 
@@ -11,20 +11,20 @@ const LoginForm = () => {
   const [idWarningMessageIndex, setIdWarningMessageIndex] = useState(0);
   const [passwordWarningMessageIndex, setPasswordWarningMessageIndex] = useState(0);
 
+  const navigate = useNavigate();
+
   const idWarningMessages = [
     '',
     '아이디를 입력하세요',
     '아이디는 6 ~ 15자 사이이고 최소 1개 이상의 영문자와 숫자를 포함해야합니다.',
+    '존재하지 않는 아이디입니다.',
   ];
   const passwordWarningMessages = [
     '',
     '비밀번호를 입력하세요',
     '비밀번호는 8 ~ 32자 사이이고 최소 1개 이상의 영문자와 숫자를 포함해야합니다.',
+    '비밀번호가 일치하지 않습니다.',
   ];
-
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setinputPassword(e.target.value);
-  };
 
   const setIdWarningMessage = () => {
     if (inputId.length === 0) {
@@ -49,9 +49,28 @@ const LoginForm = () => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValidId = validateId(inputId);
-    const isValidPassword = validateId(inputPassword);
+    const isValidPassword = validatePassword(inputPassword);
     if (isValidId && isValidPassword) {
       console.log('요청함');
+      fetch('http://localhost:5000/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: inputId,
+          password: inputPassword,
+        }),
+      }).then((res) => {
+        const { status } = res;
+        if (status === 200) {
+          navigate('/');
+        } else if (status === 401) {
+          setPasswordWarningMessageIndex(3);
+        } else if (status === 404) {
+          setIdWarningMessageIndex(3);
+        }
+      });
     } else {
       setIdWarningMessage();
       setPasswordWarningMessage();
