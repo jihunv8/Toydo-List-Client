@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { validateId, validatePassword } from '../../util/validation';
 import UserInfoInput from '../common/UserInfoInput';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
   const [inputName, setInputName] = useState('');
@@ -14,12 +15,14 @@ const SignUpForm = () => {
   const [passwordWarningMessageIndex, setPasswordWarningMessageIndex] = useState(0);
   const [passwordCheckWarningMessageIndex, setPasswordCheckWarningMessageIndex] = useState(0);
 
+  const navigate = useNavigate();
   const nameWarningMessages = ['', '이름을 입력하세요'];
 
   const idWarningMessages = [
     '',
     '아이디를 입력하세요',
     '아이디는 6 ~ 15자 사이이고 최소 1개 이상의 영문자와 숫자를 포함해야합니다.',
+    '중복된 아이디입니다.',
   ];
 
   const passwordWarningMessages = [
@@ -51,7 +54,7 @@ const SignUpForm = () => {
   const setPasswordWarningMessage = () => {
     if (inputPassword.length === 0) {
       setPasswordWarningMessageIndex(1);
-    } else if (validateId(inputPassword)) {
+    } else if (validatePassword(inputPassword)) {
       setPasswordWarningMessageIndex(0);
     } else {
       setPasswordWarningMessageIndex(2);
@@ -76,7 +79,23 @@ const SignUpForm = () => {
     const isValidPasswordCheck = inputPassword === inputPasswordCheck;
 
     if (isValidName && isValidId && isValidPassword && isValidPasswordCheck) {
-      console.log('회원가입 요청');
+      fetch('http://localhost:5000/users/new-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: inputId,
+          name: inputName,
+          password: inputPassword,
+        }),
+      }).then((res) => {
+        if (res.status === 201) {
+          navigate('/login');
+        } else if (res.status === 409) {
+          setIdWarningMessageIndex(3);
+        }
+      });
     } else {
       setNameWarningMessage();
       setIdWarningMessage();
