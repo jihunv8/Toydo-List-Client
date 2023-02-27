@@ -1,7 +1,28 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CommmonButton from '../../styles/CommonButton';
+import TodoListItem from './TodoListItem';
+
+export type Todo = {
+  todoId: string;
+  title: string;
+  isDone: boolean;
+};
 
 const TodoList = () => {
+  const [todoList, setTodoList] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId === null) return;
+
+    fetch('http://localhost:5000/todos', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => {
+        setTodoList(data.todos);
+      });
+  }, []);
+
   return (
     <TodoListWrapper>
       <TodoListHeader>
@@ -14,30 +35,9 @@ const TodoList = () => {
       </TodoListHeader>
 
       <List>
-        <TodoItem>
-          <input type="checkbox" />
-          <div className="title">제목</div>
-          <div className="button-container">
-            <button>수정</button>
-            <button>삭제</button>
-          </div>
-        </TodoItem>
-        <TodoItem>
-          <input type="checkbox" />
-          <div className="title">제목</div>
-          <div className="button-container">
-            <button>수정</button>
-            <button>삭제</button>
-          </div>
-        </TodoItem>
-        <TodoItem>
-          <input type="checkbox" />
-          <div className="title">제목</div>
-          <div className="button-container">
-            <button>수정</button>
-            <button>삭제</button>
-          </div>
-        </TodoItem>
+        {todoList.map(({ todoId, title, isDone }) => {
+          return <TodoListItem key={todoId} todoId={todoId} title={title} isDone={isDone} setTodoList={setTodoList} />;
+        })}
       </List>
     </TodoListWrapper>
   );
@@ -81,27 +81,4 @@ const List = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 20px;
-`;
-
-const TodoItem = styled.li`
-  cursor: pointer;
-  width: 100%;
-  padding: 10px 20px;
-  display: flex;
-  gap: 10px;
-  border: solid 1px #000;
-
-  > .title {
-    flex-grow: 1;
-  }
-
-  .button-container {
-    visibility: hidden;
-  }
-
-  &:hover > .button-container {
-    visibility: visible;
-    display: flex;
-    gap: 10px;
-  }
 `;
