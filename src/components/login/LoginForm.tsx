@@ -57,6 +57,7 @@ const LoginForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           id: inputId,
           password: inputPassword,
