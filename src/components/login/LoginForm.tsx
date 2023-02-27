@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { validateId, validatePassword } from '../../util/validation';
 
 import UserInfoInput from '../common/UserInfoInput';
+import CommmonButton from '../../styles/CommonButton';
 
 const LoginForm = () => {
   const [inputId, setInputId] = useState('');
@@ -51,7 +52,6 @@ const LoginForm = () => {
     const isValidId = validateId(inputId);
     const isValidPassword = validatePassword(inputPassword);
     if (isValidId && isValidPassword) {
-      console.log('요청함');
       fetch('http://localhost:5000/users/login', {
         method: 'POST',
         headers: {
@@ -64,6 +64,7 @@ const LoginForm = () => {
       }).then((res) => {
         const { status } = res;
         if (status === 200) {
+          localStorage.setItem('userId', inputId);
           navigate('/');
         } else if (status === 401) {
           setPasswordWarningMessageIndex(3);
@@ -95,7 +96,7 @@ const LoginForm = () => {
           warningMessage={passwordWarningMessages[passwordWarningMessageIndex]}
           onBlur={setPasswordWarningMessage}
         />
-        <LoginButton>로그인</LoginButton>
+        <CommmonButton>로그인</CommmonButton>
         <SignUpLink to="/sign-up">회원가입</SignUpLink>
       </Form>
     </LoginFormWrapper>
@@ -121,30 +122,6 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   gap: 30px;
-`;
-
-const InputContainer = styled.div`
-  width: 100%;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  height: 30px;
-  text-indent: 10px;
-  outline: none;
-`;
-
-const ErrorViewer = styled.div`
-  width: 100%;
-  height: 20px;
-  padding: 2px;
-  color: tomato;
-  font-size: 12px;
-`;
-
-const LoginButton = styled.button`
-  width: 100px;
-  height: 40px;
 `;
 
 const SignUpLink = styled(Link)`
