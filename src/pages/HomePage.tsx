@@ -15,20 +15,11 @@ const HomePage = () => {
   }, []);
 
   return (
-    <HomePageWrapper>
+    <div>
       <Header />
       <TodoList />
-    </HomePageWrapper>
+    </div>
   );
 };
 
 export default HomePage;
-
-const HomePageWrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;

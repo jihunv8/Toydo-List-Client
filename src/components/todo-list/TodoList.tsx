@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import CommmonButton from '../../styles/CommonButton';
+import useModal from './hooks/useModal';
+import TodoAdder from './TodoAdder';
 import TodoListItem from './TodoListItem';
 
 export type Todo = {
@@ -11,6 +14,7 @@ export type Todo = {
 
 const TodoList = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [Modal, openModal, closeModal] = useModal();
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -26,7 +30,10 @@ const TodoList = () => {
   return (
     <TodoListWrapper>
       <TodoListHeader>
-        <Addbutton>todo 추가</Addbutton>
+        <Modal>
+          <TodoAdder close={closeModal} setTodoList={setTodoList} />
+        </Modal>
+        <Addbutton onClick={openModal}>todo 추가</Addbutton>
         <Filter>
           <FilterButton>전체</FilterButton>
           <FilterButton>완료</FilterButton>
@@ -47,7 +54,8 @@ export default TodoList;
 
 const TodoListWrapper = styled.div`
   width: 800px;
-  padding: 80px 100px 40px 100px;
+  padding: 60px 100px 40px 100px;
+  margin: 120px auto 0;
   border: solid 1px #000;
   display: flex;
   flex-direction: column;
