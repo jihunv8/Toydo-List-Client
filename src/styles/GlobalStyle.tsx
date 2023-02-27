@@ -11,6 +11,10 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
+  ul {
+    list-style: none;
+  }
+
 `;
 
 export default GlobalStyle;
