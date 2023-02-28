@@ -1,5 +1,14 @@
+import { RouterProvider } from 'react-router-dom';
+import router from './pages/router';
+import GlobalStyle from './styles/GlobalStyle';
+
 const App = () => {
-  return <div className="App">Hello World</div>;
+  return (
+    <>
+      <GlobalStyle />
+      <RouterProvider router={router} />
+    </>
+  );
 };
 
 export default App;
