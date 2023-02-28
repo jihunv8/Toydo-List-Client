@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import CommmonButton from '../../styles/CommonButton';
 import useModal from './hooks/useModal';
 import TodoAdder from './TodoAdder';
+import TodoViewer from './TodoViewer';
 import TodoListItem from './TodoListItem';
 
 export type Todo = {
@@ -14,7 +15,9 @@ export type Todo = {
 
 const TodoList = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
-  const [Modal, openModal, closeModal] = useModal();
+  const [TodoAdderModal, openTodoAdderModal, closeTodoAdderModal] = useModal();
+  const [TodoViwerModal, openTodoViwerModal, closeTodoViwerModal] = useModal();
+  const [selectedTodoId, setSelectedTodoId] = useState('');
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -23,17 +26,23 @@ const TodoList = () => {
     fetch('http://localhost:5000/todos', { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => {
-        setTodoList(data.todos);
+        if (Array.isArray(data.todos)) {
+          setTodoList(data.todos);
+        }
       });
   }, []);
 
   return (
     <TodoListWrapper>
       <TodoListHeader>
-        <Modal>
-          <TodoAdder close={closeModal} setTodoList={setTodoList} />
-        </Modal>
-        <Addbutton onClick={openModal}>todo 추가</Addbutton>
+        <TodoAdderModal>
+          <TodoAdder close={closeTodoAdderModal} setTodoList={setTodoList} />
+        </TodoAdderModal>
+        <TodoViwerModal>
+          <TodoViewer close={closeTodoViwerModal} todoId={selectedTodoId} />
+        </TodoViwerModal>
+
+        <Addbutton onClick={openTodoAdderModal}>todo 추가</Addbutton>
         <Filter>
           <FilterButton>전체</FilterButton>
           <FilterButton>완료</FilterButton>
@@ -43,7 +52,17 @@ const TodoList = () => {
 
       <List>
         {todoList.map(({ todoId, title, isDone }) => {
-          return <TodoListItem key={todoId} todoId={todoId} title={title} isDone={isDone} setTodoList={setTodoList} />;
+          return (
+            <TodoListItem
+              key={todoId}
+              todoId={todoId}
+              title={title}
+              isDone={isDone}
+              setTodoList={setTodoList}
+              setSelectedTodoId={setSelectedTodoId}
+              openTodoViwerModal={openTodoViwerModal}
+            />
+          );
         })}
       </List>
     </TodoListWrapper>

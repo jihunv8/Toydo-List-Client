@@ -7,10 +7,30 @@ type TodoListItemProps = {
   title: string;
   isDone: boolean;
   setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>;
+  setSelectedTodoId: React.Dispatch<React.SetStateAction<string>>;
+  openTodoViwerModal: () => void;
 };
 
-const TodoListItem = ({ todoId, title, isDone, setTodoList }: TodoListItemProps) => {
-  const remove = () => {
+const TodoListItem = ({
+  todoId,
+  title,
+  isDone,
+  setTodoList,
+  setSelectedTodoId,
+  openTodoViwerModal,
+}: TodoListItemProps) => {
+  const select = () => {
+    setSelectedTodoId(todoId);
+    openTodoViwerModal();
+  };
+
+  const update = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+  };
+
+  const remove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+
     fetch(`http://localhost:5000/todos/${todoId}`, {
       method: 'DELETE',
       credentials: 'include',
@@ -28,11 +48,11 @@ const TodoListItem = ({ todoId, title, isDone, setTodoList }: TodoListItemProps)
   };
 
   return (
-    <TodoListItemWrapper key={todoId}>
-      <CheckBox type="checkbox" onChange={() => {}} checked={isDone} />
+    <TodoListItemWrapper onClick={select}>
+      <CheckBox type="checkbox" onChange={() => {}} onClick={(e) => e.stopPropagation()} checked={isDone} />
       <Title className="title">{title}</Title>
       <ButtonContainer className="button-container">
-        <button>수정</button>
+        <button onClick={update}>수정</button>
         <button onClick={remove}>삭제</button>
       </ButtonContainer>
     </TodoListItemWrapper>
