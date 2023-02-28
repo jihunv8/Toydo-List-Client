@@ -47,11 +47,11 @@ const TodoList = () => {
       </TodoUpdaterModal>
       <TodoListHeader>
         <Addbutton onClick={openTodoAdderModal}>todo 추가</Addbutton>
-        <Filter>
+        {/* <Filter>
           <FilterButton>전체</FilterButton>
           <FilterButton>완료</FilterButton>
           <FilterButton>미완료</FilterButton>
-        </Filter>
+        </Filter> */}
       </TodoListHeader>
 
       <List>
@@ -97,16 +97,16 @@ const Addbutton = styled(CommmonButton)`
   align-self: flex-end;
 `;
 
-const Filter = styled.div`
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-`;
+// const Filter = styled.div`
+//   margin-top: 20px;
+//   display: flex;
+//   gap: 10px;
+// `;
 
-const FilterButton = styled.button`
-  background-color: transparent;
-  border: none;
-`;
+// const FilterButton = styled.button`
+//   background-color: transparent;
+//   border: none;
+// `;
 
 const List = styled.ul`
   width: 100%;
