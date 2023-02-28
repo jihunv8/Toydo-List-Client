@@ -9,6 +9,7 @@ type TodoListItemProps = {
   setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>;
   setSelectedTodoId: React.Dispatch<React.SetStateAction<string>>;
   openTodoViwerModal: () => void;
+  openTodoUpdaterModal: () => void;
 };
 
 const TodoListItem = ({
@@ -18,6 +19,7 @@ const TodoListItem = ({
   setTodoList,
   setSelectedTodoId,
   openTodoViwerModal,
+  openTodoUpdaterModal,
 }: TodoListItemProps) => {
   const select = () => {
     setSelectedTodoId(todoId);
@@ -26,6 +28,8 @@ const TodoListItem = ({
 
   const update = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
+    setSelectedTodoId(todoId);
+    openTodoUpdaterModal();
   };
 
   const remove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

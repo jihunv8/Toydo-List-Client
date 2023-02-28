@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import CommmonButton from '../../styles/CommonButton';
 import useModal from './hooks/useModal';
+import CommmonButton from '../../styles/CommonButton';
+import TodoListItem from './TodoListItem';
 import TodoAdder from './TodoAdder';
 import TodoViewer from './TodoViewer';
-import TodoListItem from './TodoListItem';
+import TodoUpdater from './TodoUpdater';
 
 export type Todo = {
   todoId: string;
@@ -17,6 +18,7 @@ const TodoList = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
   const [TodoAdderModal, openTodoAdderModal, closeTodoAdderModal] = useModal();
   const [TodoViwerModal, openTodoViwerModal, closeTodoViwerModal] = useModal();
+  const [TodoUpdaterModal, openTodoUpdaterModal, closeTodoUpdaterModal] = useModal();
   const [selectedTodoId, setSelectedTodoId] = useState('');
 
   useEffect(() => {
@@ -34,14 +36,16 @@ const TodoList = () => {
 
   return (
     <TodoListWrapper>
+      <TodoAdderModal>
+        <TodoAdder close={closeTodoAdderModal} setTodoList={setTodoList} />
+      </TodoAdderModal>
+      <TodoViwerModal>
+        <TodoViewer close={closeTodoViwerModal} todoId={selectedTodoId} />
+      </TodoViwerModal>
+      <TodoUpdaterModal>
+        <TodoUpdater close={closeTodoUpdaterModal} setTodoList={setTodoList} todoId={selectedTodoId} />
+      </TodoUpdaterModal>
       <TodoListHeader>
-        <TodoAdderModal>
-          <TodoAdder close={closeTodoAdderModal} setTodoList={setTodoList} />
-        </TodoAdderModal>
-        <TodoViwerModal>
-          <TodoViewer close={closeTodoViwerModal} todoId={selectedTodoId} />
-        </TodoViwerModal>
-
         <Addbutton onClick={openTodoAdderModal}>todo 추가</Addbutton>
         <Filter>
           <FilterButton>전체</FilterButton>
@@ -61,6 +65,7 @@ const TodoList = () => {
               setTodoList={setTodoList}
               setSelectedTodoId={setSelectedTodoId}
               openTodoViwerModal={openTodoViwerModal}
+              openTodoUpdaterModal={openTodoUpdaterModal}
             />
           );
         })}
